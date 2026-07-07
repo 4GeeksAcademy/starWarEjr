@@ -1,37 +1,40 @@
-// Import necessary hooks and components from react-router-dom and other libraries.
-import { Link, useParams } from "react-router-dom";  // To use link for navigation and useParams to get URL parameters
-import PropTypes from "prop-types";  // To define prop types for this component
-import rigoImageUrl from "../assets/img/rigo-baby.jpg"  // Import an image asset
-import useGlobalReducer from "../hooks/useGlobalReducer";  // Import a custom hook for accessing the global state
+import React from "react";
+import { Link, useParams } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
-// Define and export the Single component which displays individual item details.
-export const Single = props => {
-  // Access the global state using the custom hook.
-  const { store } = useGlobalReducer()
+export const Single = () => {
+    const { store } = useGlobalReducer();
+    const { theId } = useParams();
 
-  // Retrieve the 'theId' URL parameter using useParams hook.
-  const { theId } = useParams()
-  const singleTodo = store.todos.find(todo => todo.id === parseInt(theId));
+    // Busca el elemento en cualquiera de las listas que tenemos
+    const person = store.people?.find(item => item.uid === theId);
+    const planet = store.planets?.find(item => item.uid === theId);
+    
+    const item = person || planet;
 
-  return (
-    <div className="container text-center">
-      {/* Display the title of the todo element dynamically retrieved from the store using theId. */}
-      <h1 className="display-4">Todo: {singleTodo?.title}</h1>
-      <hr className="my-4" />  {/* A horizontal rule for visual separation. */}
-
-      {/* A Link component acts as an anchor tag but is used for client-side routing to prevent page reloads. */}
-      <Link to="/">
-        <span className="btn btn-primary btn-lg" href="#" role="button">
-          Back home
-        </span>
-      </Link>
-    </div>
-  );
-};
-
-// Use PropTypes to validate the props passed to this component, ensuring reliable behavior.
-Single.propTypes = {
-  // Although 'match' prop is defined here, it is not used in the component.
-  // Consider removing or using it as needed.
-  match: PropTypes.object
+    return (
+        <div className="container mt-5 text-center">
+            {item ? (
+                <>
+                    <h1 className="display-4 text-danger mb-4">{item.name}</h1>
+                    <img 
+                        src="https://preview.redd.it/what-does-star-wars-mean-to-you-v0-trjrcz5h4e0d1.jpeg?width=640&crop=smart&auto=webp&s=71c2a87cfb4450fecdedaee00372db3384264de2"
+                        alt={item.name}
+                        style={{ height: "350px", objectFit: "cover", borderRadius: "10px" }}
+                    />
+                    <p className="mt-4 lead">
+                        Aquí van los detalles descriptivos de {item.name}. Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe cum rerum aspernatur illum cupiditate neque perferendis eaque nostrum adipisci, repudiandae ut iste! Quae, neque quo maiores deserunt in alias? Inventore!
+                    </p>
+                </>
+            ) : (
+                <h2 className="mt-5 text-muted">Cargando datos del imperio...</h2>
+            )}
+            
+            <hr className="my-4" />
+            
+            <Link to="/">
+                <button className="btn btn-primary btn-lg">Back home</button>
+            </Link>
+        </div>
+    );
 };
